@@ -1,0 +1,30 @@
+workflows:
+  build-wda:
+    name: Build WDA IPA
+    environment:
+      vars:
+        APPLE_ID: $APPLE_ID
+        APPLE_ID_PASSWORD: $APPLE_ID_PASSWORD
+        DEVICE_UDID: e643b9e2fe55a2e8e1420e00a04667cebf8a1dde
+        DEVELOPMENT_TEAM: "000000"
+      xcode: latest
+    scripts:
+      - name: Build for testing
+        script: |
+          xcodebuild build-for-testing \
+            -project WebDriverAgent.xcodeproj \
+            -scheme WebDriverAgentRunner \
+            -sdk iphoneos \
+            -destination "generic/platform=iOS" \
+            -derivedDataPath ./build \
+            -allowProvisioningUpdates \
+            -allowProvisioningDeviceRegistration \
+            CODE_SIGN_STYLE=Automatic \
+            DEVELOPMENT_TEAM=$DEVELOPMENT_TEAM
+      - name: Generate IPA
+        script: |
+          mkdir Payload
+          cp -r ./build/Build/Products/Debug-iphoneos/WebDriverAgentRunner-Runner.app Payload/
+          zip -r WDA.ipa Payload
+    artifacts:
+      - WDA.ipa
