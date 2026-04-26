@@ -2,30 +2,29 @@ name: Build WDA IPA
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ master ]
 
 jobs:
   build:
     runs-on: macos-latest
     steps:
-      - name: Checkout
+      - name: Checkout Appium WDA
         uses: actions/checkout@v4
+        with:
+          repository: appium/WebDriverAgent
+          ref: refs/heads/main
 
       - name: Build WDA
-        env:
-          DEVELOPER_DIR: /Applications/Xcode_15.2.app/Contents/Developer
         run: |
           xcodebuild build-for-testing \
             -project WebDriverAgent.xcodeproj \
             -scheme WebDriverAgentRunner \
             -sdk iphoneos \
-            -destination "generic/platform=iOS" \
+            -destination 'generic/platform=iOS' \
             -derivedDataPath ./build \
             -allowProvisioningUpdates \
             -allowProvisioningDeviceRegistration \
             CODE_SIGN_STYLE=Automatic \
-            DEVELOPMENT_TEAM=${{ secrets.DEVELOPMENT_TEAM }}
+            DEVELOPMENT_TEAM=000000
 
       - name: Generate IPA
         run: |
@@ -36,5 +35,5 @@ jobs:
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
-          name: WDA-${{ github.run_id }}
+          name: WDA
           path: WDA.ipa
