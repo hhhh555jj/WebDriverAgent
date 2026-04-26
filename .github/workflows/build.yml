@@ -7,11 +7,9 @@ jobs:
   build:
     runs-on: macos-latest
     steps:
-      - name: Checkout Appium WDA
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          repository: appium/WebDriverAgent
-          ref: refs/heads/main
+          repository: facebookarchive/WebDriverAgent
 
       - name: Build WDA
         run: |
@@ -32,8 +30,7 @@ jobs:
           cp -r ./build/Build/Products/Debug-iphoneos/WebDriverAgentRunner-Runner.app Payload/
           zip -r WDA.ipa Payload
 
-      - name: Upload IPA
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: WDA
           path: WDA.ipa
